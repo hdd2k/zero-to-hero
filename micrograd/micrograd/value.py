@@ -85,7 +85,13 @@ class Value:
 
     # activation functions
     def relu(self):
-        pass
+        output = Value(0 if self.data < 0 else self.data, _children=(
+            self,), _op='ReLU')
+
+        def _backward():
+            self.grad += (output.data > 0) * output.grad
+        output._backward = _backward
+        return output
 
     def tanh(self):
         pass
