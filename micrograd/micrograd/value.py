@@ -16,16 +16,33 @@ class Value:
 
     # operators for Value
     def __add__(self, other):
-        pass
+        # handle primitive int inputs
+        other = other if isinstance(other, Value) else Value(other)
+        output = Value(self.data + other.data,
+                       _children=(self, other), _op='+')
+
+        def _backward():
+            self.grad += output.grad
+            other.grad += output.grad
+
+        output._backward = _backward
+        return output
 
     def __radd__(self, other):
-        pass
+        return other + self
 
     def __sub__(self, other):
-        pass
+        other = other if isinstance(other, Value) else Value(other)
+        output = Value(self.data - other.data,
+                       _children=(self, other), _op='-')
+
+        def _backward():
+            self.grad += output.grad
+            other.grad -= output.grad
+        output._backward = _backward
 
     def __rsub__(self, other):
-        pass
+        return other + (-self)
 
     def __mul__(self, other):
         pass
@@ -59,6 +76,20 @@ class Value:
     # backpropagates new gradient to ALL reachable children from "self"
     def backward(self):
         # topo sort (leaf ... chilren->curr)
+        def topo(node, topoList, visited):
+            # all children of curr
+            for child in node._prev:
+                if child not in visited:
+                    topo(child, topoList, visited)
+
+            # curr appended
+            topoList.append(node)
+
+        topoList = []
+        visited = set()
+        topo(self, topoList, visited)
 
         # in backwards order propagate new gradients (by applying _backward)
-        pass
+        self.grad = 1
+        for node in reversed(topoList):
+            node._backward()

@@ -9,19 +9,24 @@ def test_add():
     a = Value(2.0)
     b = Value(3.0)
     c = a + b
+    c.backward()
     mg_a, mg_b, mg_c = a, b, c
 
     # pytorch
     a = torch.Tensor([2.0]).double()
     b = torch.Tensor([3.0]).double()
+    a.requires_grad = True
+    b.requires_grad = True
     c = a + b
+    c.retain_grad()
+    c.backward()
     pt_a, pt_b, pt_c = a, b, c
 
     # check - forward pass (feedforward for gradient descent)
     assert mg_a.data == pt_a.item()
 
     # check - backward pass (backpropagation)
-    assert mg_c.grad == pt_c.grad.items()
+    assert mg_c.grad == pt_c.grad.item()
 
 
 def test_sanity_check():
