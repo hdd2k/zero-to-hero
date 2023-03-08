@@ -4,6 +4,26 @@ import torch
 from micrograd.micrograd.value import Value
 
 
+def test_add():
+    # micrograd
+    a = Value(2.0)
+    b = Value(3.0)
+    c = a + b
+    mg_a, mg_b, mg_c = a, b, c
+
+    # pytorch
+    a = torch.Tensor([2.0]).double()
+    b = torch.Tensor([3.0]).double()
+    c = a + b
+    pt_a, pt_b, pt_c = a, b, c
+
+    # check - forward pass (feedforward for gradient descent)
+    assert mg_a.data == pt_a.item()
+
+    # check - backward pass (backpropagation)
+    assert mg_c.grad == pt_c.grad.items()
+
+
 def test_sanity_check():
     # Micrograd
     x = Value(-4.0)
@@ -73,5 +93,6 @@ def test_more_ops():
     assert abs(mg_b.data - pt_b.data.item()) < tol
 
 
+test_add()
 test_sanity_check()
 test_more_ops()
