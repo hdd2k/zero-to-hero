@@ -45,22 +45,39 @@ class Value:
         return other + (-self)
 
     def __mul__(self, other):
-        pass
+
+        other = other if isinstance(other, Value) else Value(other)
+        output = Value(self.data * other.data,
+                       _children=(self, other), _op='*')
+
+        def _backward():
+            self.grad += (other.data * output.grad)
+            other.grad += (self.data * output.grad)
+        output._backward = _backward
+        return output
 
     def __rmul__(self, other):
-        pass
+        return (other * self)
 
     def __pow__(self, other):
-        pass
+        assert isinstance(other.data, (int, float)
+                          ), "exponent must be a number"
+        output = Value(self.data ** other,
+                       _children=(self), _op=f'**{other}')
+
+        def _backward():
+            self.grad += (other * (self.data ** (other - 1))) * output.grad
+        output._backward = _backward
+        return output
 
     def __neg__(self):
-        pass
+        return (-1 * self)
 
     def __truediv__(self, other):
-        pass
+        return (self * (other ** -1))
 
     def __rtruediv__(self, other):
-        pass
+        return (other * (self ** -1))
 
     # repr
     def __repr__(self):
