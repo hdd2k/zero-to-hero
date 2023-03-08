@@ -28,8 +28,8 @@ class Value:
         output._backward = _backward
         return output
 
-    def __radd__(self, other):
-        return other + self
+    def __radd__(self, other):  # other + self
+        return self + other
 
     def __sub__(self, other):
         other = other if isinstance(other, Value) else Value(other)
@@ -41,8 +41,8 @@ class Value:
             other.grad -= output.grad
         output._backward = _backward
 
-    def __rsub__(self, other):
-        return other + (-self)
+    def __rsub__(self, other):  # other - self
+        return -self + other
 
     def __mul__(self, other):
 
@@ -56,8 +56,8 @@ class Value:
         output._backward = _backward
         return output
 
-    def __rmul__(self, other):
-        return (other * self)
+    def __rmul__(self, other):  # other * self
+        return (self * other)
 
     def __pow__(self, other):
         assert isinstance(other.data, (int, float)
@@ -76,7 +76,7 @@ class Value:
     def __truediv__(self, other):
         return (self * (other ** -1))
 
-    def __rtruediv__(self, other):
+    def __rtruediv__(self, other):  # other / self
         return (other * (self ** -1))
 
     # repr
