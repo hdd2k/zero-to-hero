@@ -1,7 +1,8 @@
 # perform tests by comparing results with PyTorch equivalent
 
 import torch
-from micrograd.micrograd.value import Value
+from micrograd.value import Value
+# from micrograd.micrograd.value import Value
 
 
 def test_add():
