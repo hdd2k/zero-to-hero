@@ -4,10 +4,11 @@ from micrograd.value import Value
 
 class Module:
     def zero_grad(self):
-        pass
+        for p in self.parameters():
+            p.grad = 0
 
     def parameters(self):
-        pass
+        return []
 
 
 class Neuron(Module):
@@ -52,7 +53,7 @@ class Layer(Module):
 class MLP(Module):
     def __init__(self, input_neurons, output_neurons):
         sizes = [input_neurons] + output_neurons
-        self.layers = [Layer(sizes[i], sizes[i+1], nonlin=(i != len(output_neurons)-2))
+        self.layers = [Layer(sizes[i], sizes[i+1], nonlin=(i != len(output_neurons)-1))
                        for i in range(len(sizes)-1)]
 
     def __call__(self, x):
