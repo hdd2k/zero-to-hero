@@ -62,7 +62,7 @@ class MLP(Module):
 
     def parameters(self):
         params = []
-        for l in self.layer:
+        for l in self.layers:
             params.extend(l.parameters())
         return params
 
